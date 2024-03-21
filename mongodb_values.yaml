@@ -1,0 +1,97 @@
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: mongodb
+  namespace: mongodb
+spec:
+  members: 1
+  type: ReplicaSet
+  version: "6.0.5"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: admin
+      db: admin
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: mongodb-admin-password
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+        - name: dbAdminAnyDatabase
+          db: admin
+        - name: readWriteAnyDatabase
+          db: admin
+        - name: dbAdminAnyDatabase
+          db: develop
+        - name: clusterAdmin
+          db: develop
+        - name: userAdminAnyDatabase
+          db: develop
+        - name: readWriteAnyDatabase
+          db: develop
+      scramCredentialsSecretName: my-scram
+    - name: pickupp
+      db: admin
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: mongodb-user-password
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+        - name: dbAdminAnyDatabase
+          db: admin
+        - name: readWriteAnyDatabase
+          db: admin
+        - name: clusterAdmin
+          db: develop
+        - name: userAdminAnyDatabase
+          db: develop
+        - name: dbAdminAnyDatabase
+          db: develop
+        - name: readWriteAnyDatabase
+          db: develop
+        - name: clusterAdmin
+          db: uat
+        - name: userAdminAnyDatabase
+          db: uat
+        - name: dbAdminAnyDatabase
+          db: uat
+        - name: readWriteAnyDatabase
+          db: uat
+        - name: clusterAdmin
+          db: prod
+        - name: userAdminAnyDatabase
+          db: prod
+        - name: dbAdminAnyDatabase
+          db: prod
+        - name: readWriteAnyDatabase
+          db: prod
+      scramCredentialsSecretName: my-scram
+  statefulSet:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources:
+                limits:
+                  cpu: ${cpu_limits}
+                  memory: ${memory_limits}
+                requests:
+                  cpu: ${cpu_requests}
+                  memory: ${memory_requests}
+            - name: mongodb-agent
+              resources:
+                limits:
+                  cpu: "60m"
+                  memory: "200Mi"
+                requests:
+                  cpu: "10m"
+                  memory: "20Mi"
+  additionalMongodConfig:
+    storage.wiredTiger.engineConfig.journalCompressor: zlib

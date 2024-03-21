@@ -1,0 +1,26 @@
+## Operator
+operator:
+  # watchNamespace: "*"
+  # Resources allocated to Operator Pod
+  resources:
+    limits:
+      cpu: 800m
+      memory: 600Mi
+    requests:
+      cpu: 80m
+      memory: 60Mi
+
+  # replicas deployed for the operator pod. Running 1 is optimal and suggested.
+  replicas: 1
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 2000
+
+community-operator-crds:
+  enabled: false
+
+## Operator's database
+database:
+  name: mongodb-database
+  namespace: mongodb
